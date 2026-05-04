@@ -12,7 +12,7 @@
                     <div>
                         <p class="text-indigo-200 text-sm font-medium mb-1">👋 Bienvenido de vuelta</p>
                         <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ Auth::user()->name }}</h1>
-                        <p class="mt-2 text-indigo-200 max-w-md">Aquí tienes el resumen de actividad del gimnasio. Tienes <strong class="text-white">5 nuevas inscripciones</strong> esta semana.</p>
+                        <p class="mt-2 text-indigo-200 max-w-md">Explora nuevas rutinas y descubre los mejores ejercicios para alcanzar tus objetivos hoy mismo.</p>
                     </div>
                     <div class="flex gap-3">
                         <a href="{{ route('exercises.index') }}" class="inline-flex items-center px-5 py-2.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl transition-all backdrop-blur-sm border border-white/30">
@@ -25,7 +25,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> 
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -41,8 +41,8 @@
                             ↑ 12%
                         </span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">1,284</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Socios Activos</p>
+                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ $stats['exercises'] }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Ejercicios Disponibles</p>
                 </div>
 
                 <!-- Card: Ingresos -->
@@ -57,8 +57,8 @@
                             ↑ 8%
                         </span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">€12,450</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Ingresos del Mes</p>
+                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ $stats['routines'] }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Rutinas Creadas</p>
                 </div>
 
                 <!-- Card: Asistencia -->
@@ -73,8 +73,8 @@
                             ↓ 2%
                         </span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">142</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Asistencia Hoy</p>
+                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ $stats['users'] }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Usuarios Activos</p>
                 </div>
 
                 <!-- Card: Clases -->
@@ -89,8 +89,8 @@
                             Sin cambios
                         </span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">24</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Clases Activas</p>
+                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">12</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Rutinas Completadas</p>
                 </div>
             </div>
 
@@ -101,39 +101,34 @@
                 <div class="lg:col-span-2 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                     <div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-800">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Inscripciones Recientes</h3>
-                            <p class="text-xs text-gray-500 mt-0.5">Últimas altas de socios</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Rutinas Destacadas</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Explora las rutinas más populares</p>
                         </div>
-                        <a href="{{ route('users.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Ver todos →</a>
+                        <a href="#" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Ver todas →</a>
                     </div>
                     <div class="divide-y divide-gray-50 dark:divide-gray-800">
-                        @foreach([
-                            ['initials' => 'JD', 'name' => 'Juan Díaz', 'plan' => 'Premium', 'time' => 'Hace 2 horas', 'status' => 'activo', 'color' => 'indigo'],
-                            ['initials' => 'ML', 'name' => 'María López', 'plan' => 'Básico', 'time' => 'Hace 5 horas', 'status' => 'activo', 'color' => 'purple'],
-                            ['initials' => 'RG', 'name' => 'Roberto García', 'plan' => 'Prueba', 'time' => 'Ayer', 'status' => 'pendiente', 'color' => 'orange'],
-                            ['initials' => 'CS', 'name' => 'Carla Sánchez', 'plan' => 'Premium', 'time' => 'Hace 2 días', 'status' => 'activo', 'color' => 'pink'],
-                        ] as $member)
-                        <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        @forelse($recentRoutines as $routine)
+                        @php
+                            $colors = ['indigo', 'orange', 'emerald', 'purple', 'blue', 'pink'];
+                            $color = $colors[$loop->index % count($colors)];
+                        @endphp
+                        <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer" onclick="window.location.href='{{ route('routines.show', $routine) }}'">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-full bg-{{ $member['color'] }}-100 dark:bg-{{ $member['color'] }}-900/30 flex items-center justify-center text-{{ $member['color'] }}-700 dark:text-{{ $member['color'] }}-400 font-bold text-sm flex-shrink-0">
-                                    {{ $member['initials'] }}
+                                <div class="w-10 h-10 rounded-full bg-{{ $color }}-100 dark:bg-{{ $color }}-900/30 flex items-center justify-center text-xl flex-shrink-0">
+                                    💪
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $member['name'] }}</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Plan {{ $member['plan'] }} · {{ $member['time'] }}</p>
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ $routine->name }}</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">Por {{ $routine->creator->name ?? 'Sistema' }} · {{ $routine->exercises()->count() }} ejercicios</p>
                                 </div>
                             </div>
-                            @if($member['status'] === 'activo')
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activo
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pendiente
-                                </span>
-                            @endif
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                Rutina
+                            </span>
                         </div>
-                        @endforeach
+                        @empty
+                        <div class="p-6 text-center text-gray-500">No hay rutinas disponibles aún.</div>
+                        @endforelse
                     </div>
                 </div>
 
@@ -141,38 +136,34 @@
                 <div class="space-y-6">
                     <!-- Upcoming Classes -->
                     <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
-                        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-5">Próximas Clases</h3>
+                        <div class="flex justify-between items-center mb-5">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Tus Objetivos (Semana)</h3>
+                            <a href="{{ route('planner.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Editar Plan →</a>
+                        </div>
                         <div class="space-y-4">
-                            <div class="flex items-center gap-4 p-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800">
-                                <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
-                                    <span class="block text-xs font-bold text-indigo-600 uppercase tracking-wider">Hoy</span>
-                                    <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">18:00</span>
+                            @php
+                                // Solo mostramos los primeros 3 días que tengan rutina asignada, o si no hay ninguno, un mensaje
+                                $daysToShow = $weeklyPlans->keys()->take(3);
+                            @endphp
+                            
+                            @forelse($daysToShow as $day)
+                                @php $plan = $weeklyPlans[$day]; @endphp
+                                <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer" onclick="window.location.href='{{ route('routines.show', $plan->routine) }}'">
+                                    <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
+                                        <span class="block text-xs font-bold text-indigo-600 uppercase tracking-wider">{{ substr($day, 0, 3) }}</span>
+                                        <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">💪</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $plan->routine->name }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ $plan->routine->exercises->count() }} ejercicios</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900 dark:text-white">Crossfit Avanzado</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Coach: Alex Torres</p>
+                            @empty
+                                <div class="p-4 text-center bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                                    <p class="text-sm text-gray-500 mb-2">Aún no has planificado tu semana.</p>
+                                    <a href="{{ route('planner.index') }}" class="inline-block px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg hover:bg-indigo-700">Comenzar a planificar</a>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                                <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
-                                    <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Hoy</span>
-                                    <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">19:30</span>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900 dark:text-white">Yoga & Mindfulness</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Coach: Sara Moon</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
-                                <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
-                                    <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider">Mañana</span>
-                                    <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">09:00</span>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-900 dark:text-white">Spinning</p>
-                                    <p class="text-xs text-gray-500 mt-0.5">Coach: Marcos Vidal</p>
-                                </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
 
@@ -183,10 +174,10 @@
                             <div class="inline-flex items-center px-2.5 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-xs font-bold mb-3">
                                 ✨ NOVEDAD
                             </div>
-                            <h4 class="font-bold text-white mb-2">Exporta reportes a PDF</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed mb-4">Genera reportes de membresías y asistencia directamente desde el panel de administración.</p>
+                            <h4 class="font-bold text-white mb-2">Crea tu propia rutina</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed mb-4">Combina tus ejercicios favoritos y crea una rutina personalizada que se adapte a tus necesidades.</p>
                             <a href="#" class="inline-flex items-center text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
-                                Saber más →
+                                Empezar ahora →
                             </a>
                         </div>
                     </div>

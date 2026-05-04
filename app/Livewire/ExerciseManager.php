@@ -37,6 +37,7 @@ class ExerciseManager extends Component
 
     public function openModal()
     {
+        abort_if(!auth()->user()->hasRole('admin'), 403);
         $this->isModalOpen = true;
         $this->resetInputFields();
     }
@@ -60,6 +61,7 @@ class ExerciseManager extends Component
 
     public function store()
     {
+        abort_if(!auth()->user()->hasRole('admin'), 403);
         $this->validate();
 
         $exercise = Exercise::updateOrCreate(['id' => $this->exerciseId], [
@@ -88,6 +90,7 @@ class ExerciseManager extends Component
 
     public function edit($id)
     {
+        abort_if(!auth()->user()->hasRole('admin'), 403);
         $exercise = Exercise::findOrFail($id);
         $this->exerciseId = $id;
         $this->name = $exercise->name;
@@ -101,6 +104,7 @@ class ExerciseManager extends Component
 
     public function delete($id)
     {
+        abort_if(!auth()->user()->hasRole('admin'), 403);
         Exercise::findOrFail($id)->delete();
         session()->flash('message', 'Ejercicio eliminado.');
     }

@@ -77,4 +77,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Routine::class, 'creator_id');
     }
+
+    /**
+     * Get the weekly plans for the user.
+     */
+    public function weeklyPlans(): HasMany
+    {
+        return $this->hasMany(WeeklyPlan::class);
+    }
 }

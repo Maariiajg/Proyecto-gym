@@ -8,7 +8,19 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $stats = [
+        'exercises' => \App\Models\Exercise::count(),
+        'routines' => \App\Models\Routine::count(),
+        'users' => \App\Models\User::count(),
+    ];
+    $recentRoutines = \App\Models\Routine::with('creator')->latest()->take(4)->get();
+    
+    $weeklyPlans = \App\Models\WeeklyPlan::with('routine')
+        ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+        ->get()
+        ->keyBy('day_of_week');
+    
+    return view('dashboard', compact('stats', 'recentRoutines', 'weeklyPlans'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 use App\Http\Controllers\ExerciseController;
@@ -28,13 +40,27 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rutas de Ejercicios
-    Route::resource('exercises', ExerciseController::class);
+    // Rutas de Ejercicios (Solo lectura para todos)
+    Route::get('exercises', [ExerciseController::class, 'index'])->name('exercises.index');
+    Route::get('exercises/{exercise}', [ExerciseController::class, 'show'])->name('exercises.show');
 
-    // Rutas de Usuarios (Placeholder)
-    Route::get('/users', function() {
-        return view('dashboard'); // Placeholder until UserController is created
-    })->name('users.index');
+    // Rutas de Rutinas (Solo lectura para todos)
+    Route::get('routines', [\App\Http\Controllers\RoutineController::class, 'index'])->name('routines.index');
+    Route::get('routines/{routine}', [\App\Http\Controllers\RoutineController::class, 'show'])->name('routines.show');
+
+    // Planificación Semanal
+    Route::get('/planner', function () {
+        return view('planner.index');
+    })->name('planner.index');
+});
+
+// Rutas protegidas para Administradores
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    // CRUD completo de Ejercicios
+    Route::resource('exercises', ExerciseController::class)->except(['index', 'show']);
+    
+    // CRUD completo de Rutinas
+    Route::resource('routines', \App\Http\Controllers\RoutineController::class)->except(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';
