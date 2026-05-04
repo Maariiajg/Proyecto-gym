@@ -12,6 +12,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 use App\Http\Controllers\ExerciseController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\MembershipController;
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::post('users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    
+    // Control de Membresías
+    Route::resource('memberships', MembershipController::class);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

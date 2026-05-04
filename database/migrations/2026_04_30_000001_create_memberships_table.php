@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->date('start_date');
             $table->date('end_date');
-            $table->enum('status', ['active', 'expired', 'pending'])->default('pending');
+            $table->enum('status', ['active', 'expired', 'cancelled'])->default('active');
             $table->timestamps();
         });
     }

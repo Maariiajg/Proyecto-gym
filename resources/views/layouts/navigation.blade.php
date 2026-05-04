@@ -15,17 +15,18 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="'#'" :active="false">
-                        {{ __('Usuarios') }}
-                    </x-nav-link>
-                    <x-nav-link :href="'#'" :active="false">
+
+                    @role('admin')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Usuarios') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.*')">
+                            {{ __('Membresías') }}
+                        </x-nav-link>
+                    @endrole
+
+                    <x-nav-link :href="route('exercises.index')" :active="request()->routeIs('exercises.*')">
                         {{ __('Ejercicios') }}
-                    </x-nav-link>
-                    <x-nav-link :href="'#'" :active="false">
-                        {{ __('Rutinas') }}
-                    </x-nav-link>
-                    <x-nav-link :href="'#'" :active="false">
-                        {{ __('Membresías') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -82,17 +83,18 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="'#'" :active="false">
-                {{ __('Usuarios') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="'#'" :active="false">
+
+            @role('admin')
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('memberships.index')" :active="request()->routeIs('memberships.*')">
+                    {{ __('Membresías') }}
+                </x-responsive-nav-link>
+            @endrole
+
+            <x-responsive-nav-link :href="route('exercises.index')" :active="request()->routeIs('exercises.*')">
                 {{ __('Ejercicios') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="'#'" :active="false">
-                {{ __('Rutinas') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="'#'" :active="false">
-                {{ __('Membresías') }}
             </x-responsive-nav-link>
         </div>
 

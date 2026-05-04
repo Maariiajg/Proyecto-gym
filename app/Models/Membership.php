@@ -18,6 +18,16 @@ class Membership extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
+    /**
      * Get the user that owns the membership.
      */
     public function user(): BelongsTo
