@@ -15,8 +15,7 @@ class ExerciseController extends Controller
      */
     public function index(): View
     {
-        $exercises = Exercise::paginate(10);
-        return view('exercises.index', compact('exercises'));
+        return view('exercises.index');
     }
 
     /**

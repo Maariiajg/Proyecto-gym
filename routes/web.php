@@ -20,6 +20,11 @@ Route::middleware('auth')->group(function () {
 
     // Rutas de Ejercicios
     Route::resource('exercises', ExerciseController::class);
+
+    // Rutas de Usuarios (Placeholder)
+    Route::get('/users', function() {
+        return view('dashboard'); // Placeholder until UserController is created
+    })->name('users.index');
 });
 
 require __DIR__.'/auth.php';
