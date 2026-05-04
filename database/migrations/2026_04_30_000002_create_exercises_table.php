@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('exercises', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->text('description');
-            $table->string('muscle_group');
-            $table->string('media_url')->nullable();
+            $table->text('description')->nullable();
+            $table->string('target_muscle'); // pecho, espalda, piernas, etc.
+            $table->string('video_url')->nullable();
+            $table->enum('difficulty_level', ['principiante', 'intermedio', 'avanzado'])->default('principiante');
             $table->timestamps();
         });
     }
