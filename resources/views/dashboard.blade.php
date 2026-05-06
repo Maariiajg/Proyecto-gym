@@ -17,11 +17,11 @@
                     <div class="flex gap-3">
                         <a href="{{ route('exercises.index') }}" class="inline-flex items-center px-5 py-2.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl transition-all backdrop-blur-sm border border-white/30">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            Ejercicios
+                            Explorar Ejercicios
                         </a>
-                        <a href="{{ route('users.index') }}" class="inline-flex items-center px-5 py-2.5 bg-white text-indigo-700 text-sm font-semibold rounded-xl hover:bg-indigo-50 transition-all shadow-lg">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            Usuarios
+                        <a href="{{ route('routines.index') }}" class="inline-flex items-center px-5 py-2.5 bg-white text-indigo-700 text-sm font-semibold rounded-xl hover:bg-indigo-50 transition-all shadow-lg">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                            Mis Rutinas
                         </a>
                     </div>
                 </div>
@@ -61,21 +61,7 @@
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Rutinas Creadas</p>
                 </div>
 
-                <!-- Card: Asistencia -->
-                <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-2.5 bg-orange-50 dark:bg-orange-900/30 rounded-xl">
-                            <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                            </svg>
-                        </div>
-                        <span class="inline-flex items-center text-xs font-bold text-red-500 bg-red-50 dark:bg-red-900/30 px-2.5 py-1 rounded-full">
-                            ↓ 2%
-                        </span>
-                    </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ $stats['users'] }}</p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Usuarios Activos</p>
-                </div>
+
 
                 <!-- Card: Clases -->
                 <div class="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
@@ -89,7 +75,7 @@
                             Sin cambios
                         </span>
                     </div>
-                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">12</p>
+                    <p class="text-3xl font-extrabold text-gray-900 dark:text-white">{{ $stats['completed_routines'] }}</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Rutinas Completadas</p>
                 </div>
             </div>
@@ -104,7 +90,7 @@
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white">Rutinas Destacadas</h3>
                             <p class="text-xs text-gray-500 mt-0.5">Explora las rutinas más populares</p>
                         </div>
-                        <a href="#" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Ver todas →</a>
+                        <a href="{{ route('routines.index') }}" class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors">Ver todas →</a>
                     </div>
                     <div class="divide-y divide-gray-50 dark:divide-gray-800">
                         @forelse($recentRoutines as $routine)
@@ -145,18 +131,25 @@
                                 // Solo mostramos los primeros 3 días que tengan rutina asignada, o si no hay ninguno, un mensaje
                                 $daysToShow = $weeklyPlans->keys()->take(3);
                             @endphp
-                            
-                            @forelse($daysToShow as $day)
+                                                       @forelse($daysToShow as $day)
                                 @php $plan = $weeklyPlans[$day]; @endphp
-                                <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors cursor-pointer" onclick="window.location.href='{{ route('routines.show', $plan->routine) }}'">
-                                    <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
-                                        <span class="block text-xs font-bold text-indigo-600 uppercase tracking-wider">{{ substr($day, 0, 3) }}</span>
-                                        <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">💪</span>
+                                <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors group relative">
+                                    <div class="flex items-center gap-4 cursor-pointer flex-1" onclick="window.location.href='{{ route('routines.show', $plan->routine) }}'">
+                                        <div class="text-center bg-white dark:bg-gray-900 rounded-lg px-3 py-2 shadow-sm min-w-16">
+                                            <span class="block text-xs font-bold text-indigo-600 uppercase tracking-wider">{{ substr($day, 0, 3) }}</span>
+                                            <span class="block text-xl font-extrabold text-gray-900 dark:text-white leading-tight">💪</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $plan->routine->name }}</p>
+                                            <p class="text-xs text-gray-500 mt-0.5">{{ $plan->routine->exercises->count() }} ejercicios</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $plan->routine->name }}</p>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ $plan->routine->exercises->count() }} ejercicios</p>
-                                    </div>
+                                    <form action="{{ route('routines.complete', $plan->routine) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="p-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg hover:bg-emerald-500 hover:text-white transition-all shadow-sm relative z-20" title="Marcar como completada">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </button>
+                                    </form>
                                 </div>
                             @empty
                                 <div class="p-4 text-center bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
@@ -176,7 +169,7 @@
                             </div>
                             <h4 class="font-bold text-white mb-2">Crea tu propia rutina</h4>
                             <p class="text-xs text-gray-400 leading-relaxed mb-4">Combina tus ejercicios favoritos y crea una rutina personalizada que se adapte a tus necesidades.</p>
-                            <a href="#" class="inline-flex items-center text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
+                            <a href="{{ route('routines.index') }}" class="inline-flex items-center text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors">
                                 Empezar ahora →
                             </a>
                         </div>

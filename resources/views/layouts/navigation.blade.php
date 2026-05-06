@@ -3,10 +3,8 @@
     
     <!-- Sidebar Header (Logo) -->
     <div class="flex items-center h-24 px-8">
-        <div class="bg-indigo-600 rounded-2xl p-2 shadow-lg shadow-indigo-200 dark:shadow-none">
-            <x-application-logo class="h-6 w-auto fill-current text-white" />
-        </div>
-        <span class="ml-3 font-extrabold text-xl tracking-tight text-gray-900 dark:text-white uppercase">{{ config('app.name', 'GymMaster') }}</span>
+        <x-application-logo class="h-10 w-auto" />
+        <span class="ml-3 font-extrabold text-xl tracking-tight text-gray-900 dark:text-white uppercase">{{ config('app.name', 'trena') }}</span>
     </div>
 
     <!-- Navigation Menu -->
@@ -62,6 +60,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     Mi Plan
+                </a>
+                <a href="{{ route('progress.index') }}" 
+                   class="group flex items-center px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('progress.*') ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white' }}">
+                    <svg class="mr-4 h-5 w-5 transition-transform group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Mi Progreso
                 </a>
                 <a href="{{ route('profile.edit') }}" 
                    class="group flex items-center px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 {{ request()->routeIs('profile.*') ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-400' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:text-indigo-600 dark:hover:text-white' }}">

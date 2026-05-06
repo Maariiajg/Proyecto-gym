@@ -4,9 +4,18 @@
             <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
                 {{ $routine->name }}
             </h2>
-            <a href="{{ route('routines.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                &larr; Volver a Rutinas
-            </a>
+            <div class="flex items-center gap-4">
+                <form action="{{ route('routines.complete', $routine) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-200 dark:shadow-none">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Completar ahora
+                    </button>
+                </form>
+                <a href="{{ route('routines.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                    &larr; Volver a Rutinas
+                </a>
+            </div>
         </div>
     </x-slot>
 

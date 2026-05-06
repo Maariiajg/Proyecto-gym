@@ -32,16 +32,29 @@ class RoutineManager extends Component
 
     public function render()
     {
-        $this->routines = Routine::with('creator', 'exercises')
-            ->where('name', 'like', '%' . $this->search . '%')
-            ->get();
+        $query = Routine::with('creator', 'exercises')
+            ->where('name', 'like', '%' . $this->search . '%');
+
+        // If not admin, only see routines created by themselves OR created by admins
+        if (!auth()->user()->hasRole('admin')) {
+            $query->where(function($q) {
+                $q->where('creator_id', auth()->id())
+                  ->orWhereHas('creator', function($q2) {
+                      $q2->whereHas('roles', function($q3) {
+                          $q3->where('name', 'admin');
+                      });
+                  });
+            });
+        }
+
+        $this->routines = $query->latest()->get();
             
         return view('livewire.routine-manager');
     }
 
     public function openModal()
     {
-        abort_if(!auth()->user()->hasRole('admin'), 403);
+        // Clients can also create routines
         $this->isModalOpen = true;
         $this->resetInputFields();
     }
@@ -71,8 +84,13 @@ class RoutineManager extends Component
 
     public function store()
     {
-        abort_if(!auth()->user()->hasRole('admin'), 403);
         $this->validate();
+
+        // If editing, check ownership
+        if ($this->routineId) {
+            $routine = Routine::findOrFail($this->routineId);
+            abort_if(!auth()->user()->hasRole('admin') && $routine->creator_id !== auth()->id(), 403);
+        }
 
         $routine = Routine::updateOrCreate(['id' => $this->routineId], [
             'name' => $this->name,
@@ -80,7 +98,7 @@ class RoutineManager extends Component
             'creator_id' => $this->routineId ? Routine::find($this->routineId)->creator_id : Auth::id(),
         ]);
 
-        // Sync exercises with basic pivot data (could be expanded later for specific sets/reps)
+        // Sync exercises with basic pivot data
         $syncData = [];
         foreach ($this->selectedExercises as $exId) {
             $syncData[$exId] = ['sets' => 3, 'reps' => 10, 'rest_time_seconds' => 60];
@@ -95,8 +113,11 @@ class RoutineManager extends Component
 
     public function edit($id)
     {
-        abort_if(!auth()->user()->hasRole('admin'), 403);
         $routine = Routine::with('exercises')->findOrFail($id);
+        
+        // Clients can only edit their own routines
+        abort_if(!auth()->user()->hasRole('admin') && $routine->creator_id !== auth()->id(), 403);
+
         $this->routineId = $id;
         $this->name = $routine->name;
         $this->description = $routine->description;
@@ -107,8 +128,12 @@ class RoutineManager extends Component
 
     public function delete($id)
     {
-        abort_if(!auth()->user()->hasRole('admin'), 403);
-        Routine::findOrFail($id)->delete();
+        $routine = Routine::findOrFail($id);
+        
+        // Clients can only delete their own routines
+        abort_if(!auth()->user()->hasRole('admin') && $routine->creator_id !== auth()->id(), 403);
+
+        $routine->delete();
         session()->flash('message', 'Rutina eliminada.');
     }
 }

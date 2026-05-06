@@ -11,7 +11,7 @@ Route::get('/dashboard', function () {
     $stats = [
         'exercises' => \App\Models\Exercise::count(),
         'routines' => \App\Models\Routine::count(),
-        'users' => \App\Models\User::count(),
+        'completed_routines' => \App\Models\RoutineLog::where('user_id', \Illuminate\Support\Facades\Auth::id())->count(),
     ];
     $recentRoutines = \App\Models\Routine::with('creator')->latest()->take(4)->get();
     
@@ -52,6 +52,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/planner', function () {
         return view('planner.index');
     })->name('planner.index');
+
+    // Mi Progreso
+    Route::get('/progress', function () {
+        return view('progress.index');
+    })->name('progress.index');
+
+    Route::post('/routines/{routine}/complete', function (\App\Models\Routine $routine) {
+        \App\Models\RoutineLog::create([
+            'user_id' => auth()->id(),
+            'routine_id' => $routine->id,
+            'completed_at' => now(),
+        ]);
+        return back()->with('message', '¡Rutina completada! Buen trabajo.');
+    })->name('routines.complete');
+
+    Route::get('/progress/routines', function () {
+        $logs = \App\Models\RoutineLog::with('routine')
+            ->where('user_id', auth()->id())
+            ->orderBy('completed_at', 'desc')
+            ->get();
+        return view('progress.routines', compact('logs'));
+    })->name('progress.routines');
 });
 
 // Rutas protegidas para Administradores

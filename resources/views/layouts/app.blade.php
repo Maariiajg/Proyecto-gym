@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'GymMaster') }}</title>
+        <title>{{ config('app.name', 'trena') }}</title>
 
         <!-- Fonts: Inter from Google -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,6 +50,14 @@
                 <!-- Main Scrollable Content -->
                 <main class="flex-1 overflow-y-auto relative focus:outline-none bg-gray-50 dark:bg-gray-950">
                     <div class="py-6">
+                        @if (session()->has('message'))
+                            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 mb-6">
+                                <div class="p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 rounded-2xl flex items-center gap-3 animate-bounce shadow-lg">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="font-bold italic">{{ session('message') }}</span>
+                                </div>
+                            </div>
+                        @endif
                         {{ $slot }}
                     </div>
                 </main>
