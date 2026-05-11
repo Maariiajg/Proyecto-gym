@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fix for dropdown visibility */
+select option {
+    background-color: white !important;
+    color: black !important;
+}
+

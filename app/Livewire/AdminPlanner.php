@@ -21,10 +21,8 @@ class AdminPlanner extends Component
 
     public function mount()
     {
-        // If not admin, just show their own plan
-        if (!Auth::user()->hasRole('admin')) {
-            $this->activeTab = 'mine';
-        }
+        // Admin always focuses on user plans
+        $this->activeTab = 'all';
     }
 
     public function render()

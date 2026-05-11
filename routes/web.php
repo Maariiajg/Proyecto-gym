@@ -9,6 +9,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     $stats = [
+        'users' => \App\Models\User::count(),
         'exercises' => \App\Models\Exercise::count(),
         'routines' => \App\Models\Routine::count(),
         'completed_routines' => \App\Models\RoutineLog::where('user_id', \Illuminate\Support\Facades\Auth::id())->count(),
@@ -19,8 +20,34 @@ Route::get('/dashboard', function () {
         ->where('user_id', \Illuminate\Support\Facades\Auth::id())
         ->get()
         ->keyBy('day_of_week');
+
+    // Real Volume Chart Data (Last 12 days)
+    $chartData = \App\Models\ExerciseLog::where('user_id', auth()->id())
+        ->where('log_date', '>=', now()->subDays(12))
+        ->selectRaw('log_date, SUM(weight * repetitions) as total_volume')
+        ->groupBy('log_date')
+        ->orderBy('log_date', 'asc')
+        ->get()
+        ->pluck('total_volume', 'log_date')
+        ->toArray();
     
-    return view('dashboard', compact('stats', 'recentRoutines', 'weeklyPlans'));
+    // Fill missing days with 0
+    $fullChartData = [];
+    for ($i = 11; $i >= 0; $i--) {
+        $date = now()->subDays($i)->format('Y-m-d');
+        $fullChartData[$date] = $chartData[$date] ?? 0;
+    }
+
+    // Real Personal Records
+    $personalRecords = \App\Models\ExerciseLog::where('user_id', auth()->id())
+        ->selectRaw('exercise_id, MAX(weight) as max_weight')
+        ->groupBy('exercise_id')
+        ->with('exercise:id,name')
+        ->orderBy('max_weight', 'desc')
+        ->take(3)
+        ->get();
+    
+    return view('dashboard', compact('stats', 'recentRoutines', 'weeklyPlans', 'fullChartData', 'personalRecords'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 use App\Http\Controllers\ExerciseController;
@@ -55,6 +82,9 @@ Route::middleware('auth')->group(function () {
 
     // Mi Progreso
     Route::get('/progress', function () {
+        if (auth()->user()->hasRole('admin')) {
+            return redirect()->route('dashboard');
+        }
         return view('progress.index');
     })->name('progress.index');
 

@@ -17,6 +17,25 @@ class Routine extends Model
         'creator_id',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('visibility', function ($query) {
+            if (auth()->check()) {
+                $query->where(function ($q) {
+                    $q->where('creator_id', auth()->id());
+                    
+                    if (!auth()->user()->hasRole('admin')) {
+                        $q->orWhereHas('creator', function ($q2) {
+                            $q2->whereHas('roles', function ($q3) {
+                                $q3->where('name', 'admin');
+                            });
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     /**
      * Get the user (trainer) who created the routine.
      */

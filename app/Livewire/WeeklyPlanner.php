@@ -33,18 +33,7 @@ class WeeklyPlanner extends Component
             abort(403);
         }
 
-        $query = Routine::query();
-        if (!Auth::user()->hasRole('admin')) {
-            $query->where(function($q) {
-                $q->where('creator_id', Auth::id())
-                  ->orWhereHas('creator', function($q2) {
-                      $q2->whereHas('roles', function($q3) {
-                          $q3->where('name', 'admin');
-                      });
-                  });
-            });
-        }
-        $this->routines = $query->orderBy('name')->get();
+        $this->routines = Routine::orderBy('name')->get();
     }
 
     public function render()

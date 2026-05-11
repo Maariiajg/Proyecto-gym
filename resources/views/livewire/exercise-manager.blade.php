@@ -1,148 +1,174 @@
-<div>
-    <div class="flex justify-between items-center mb-6">
-        <div class="relative w-64">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </span>
-            <input wire:model.live="search" type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" placeholder="Buscar ejercicios...">
+<div class="space-y-10">
+    <!-- Header with Search & Add -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div>
+            <h1 class="text-4xl font-black text-white uppercase tracking-tighter mb-2">Biblioteca de <span class="text-indigo-500 italic">Ejercicios</span></h1>
+            <p class="text-slate-500 text-sm font-bold uppercase tracking-widest">Explora y gestiona tu arsenal de entrenamiento</p>
         </div>
-        @role('admin')
-        <button wire:click="openModal()" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 dark:shadow-none">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-            Nuevo Ejercicio
-        </button>
-        @endrole
+        
+        <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="relative flex-1 md:w-80 group">
+                <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-slate-500 group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input wire:model.live="search" type="text" class="block w-full pl-12 pr-4 py-4 glass rounded-2xl text-white placeholder-slate-600 focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all font-bold text-sm" placeholder="Buscar movimientos...">
+            </div>
+            
+            @role('admin')
+            <button wire:click="openModal()" class="px-6 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all shadow-xl shadow-indigo-500/20 flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                Añadir
+            </button>
+            @endrole
+        </div>
     </div>
 
     @if (session()->has('message'))
-        <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 flex justify-between items-center rounded-r-xl">
-            <span>{{ session('message') }}</span>
-            <button @click="open = false" class="text-green-700">&times;</button>
+        <div class="p-4 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-2xl flex items-center gap-3 animate-pulse shadow-lg indigo-glow">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="font-bold italic">{{ session('message') }}</span>
         </div>
     @endif
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Exercises Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($exercises as $exercise)
-            <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all group">
-                <div class="h-48 bg-gray-200 dark:bg-gray-700 relative overflow-hidden">
+            <div class="glass rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-indigo-500/30 transition-all duration-500 group relative cursor-pointer" 
+                 onclick="window.location.href='{{ route('exercises.show', $exercise) }}'">
+                <!-- Card Header with Image/Preview -->
+                <div class="h-64 bg-slate-900 relative overflow-hidden">
                     @if($exercise->getFirstMediaUrl('exercises'))
-                        <img src="{{ $exercise->getFirstMediaUrl('exercises') }}" alt="{{ $exercise->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="w-full h-full overflow-hidden">
+                            <img src="/storage/{{ $exercise->getFirstMedia('exercises')->id }}/{{ $exercise->getFirstMedia('exercises')->file_name }}" alt="{{ $exercise->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100">
+                        </div>
                     @else
-                        <div class="flex items-center justify-center h-full text-gray-400">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <div class="flex items-center justify-center h-full text-slate-800 italic font-black text-6xl select-none group-hover:scale-110 transition-transform">
+                            TRENA
                         </div>
                     @endif
-                    <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm text-[10px] font-bold uppercase rounded-full shadow-sm
-                            {{ $exercise->difficulty_level === 'principiante' ? 'text-green-600' : ($exercise->difficulty_level === 'intermedio' ? 'text-orange-600' : 'text-red-600') }}">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    
+                    <!-- Difficulty Badge -->
+                    <div class="absolute top-6 left-6">
+                        <span class="px-4 py-1.5 rounded-full glass border border-white/10 text-[9px] font-black uppercase tracking-widest
+                            {{ $exercise->difficulty_level === 'principiante' ? 'text-emerald-400' : ($exercise->difficulty_level === 'intermedio' ? 'text-orange-400' : 'text-rose-500') }}">
                             {{ $exercise->difficulty_level }}
                         </span>
                     </div>
                 </div>
-                <div class="p-5">
-                    <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ $exercise->name }}</h4>
-                    <p class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-3 uppercase tracking-wider">{{ $exercise->target_muscle }}</p>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4">{{ $exercise->description ?: 'Sin descripción.' }}</p>
-                    
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-50 dark:border-gray-700">
-                        <div class="flex space-x-2">
-                            @role('admin')
-                            <button wire:click="edit({{ $exercise->id }})" class="p-2 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                            </button>
-                            <button wire:click="delete({{ $exercise->id }})" wire:confirm="¿Estás seguro de eliminar este ejercicio?" class="p-2 text-gray-400 hover:text-red-600 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                            @endrole
+
+                <!-- Card Content -->
+                <div class="p-8 relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="text-2xl font-black text-white tracking-tight group-hover:text-indigo-400 transition-colors uppercase leading-none">{{ $exercise->name }}</h4>
+                            <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mt-2 border-b border-indigo-500/20 inline-block pb-1">{{ $exercise->target_muscle }}</p>
                         </div>
                         @if($exercise->video_url)
-                            <a href="{{ $exercise->video_url }}" target="_blank" class="text-gray-400 hover:text-red-500">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                            <a href="{{ $exercise->video_url }}" target="_blank" onclick="event.stopPropagation()" class="p-3 glass rounded-xl text-slate-500 hover:text-rose-500 transition-all group/btn shadow-inner">
+                                <svg class="w-6 h-6 group-hover/btn:scale-110" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
                             </a>
                         @endif
                     </div>
+                    
+                    <p class="text-sm text-slate-400 font-medium leading-relaxed line-clamp-2 min-h-[3rem] mb-8">
+                        {{ $exercise->description ?: 'Instrucciones técnicas no detalladas para este movimiento.' }}
+                    </p>
+                    
+                    <!-- Admin Actions -->
+                    @role('admin')
+                    <div class="flex gap-4 pt-6 border-t border-white/5">
+                        <button wire:click="edit({{ $exercise->id }})" onclick="event.stopPropagation()" class="flex-1 px-4 py-3 glass rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:border-indigo-500/50 transition-all">
+                            Editar
+                        </button>
+                        <button wire:click="delete({{ $exercise->id }})" onclick="event.stopPropagation()" wire:confirm="¿Deseas eliminar este ejercicio de la biblioteca?" class="px-4 py-3 glass rounded-xl text-slate-500 hover:text-rose-500 transition-all shadow-inner">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    @endrole
                 </div>
             </div>
         @endforeach
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Premium -->
     @if($isModalOpen)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 backdrop-blur-sm transition-opacity" aria-hidden="true" wire:click="closeModal()"></div>
+        <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl transition-opacity" wire:click="closeModal()"></div>
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-100 dark:border-gray-700">
-                    <form wire:submit.prevent="store">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $exerciseId ? 'Editar Ejercicio' : 'Nuevo Ejercicio' }}</h3>
-                                <button type="button" wire:click="closeModal()" class="text-gray-400 hover:text-gray-500">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                </button>
+            <div class="relative glass rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl border border-white/10 animate-scale-in">
+                <form wire:submit.prevent="store">
+                    <div class="p-10">
+                        <div class="flex justify-between items-center mb-10">
+                            <div>
+                                <h3 class="text-3xl font-black text-white uppercase tracking-tighter">{{ $exerciseId ? 'Modificar' : 'Crear' }} <span class="text-indigo-500 italic">Ejercicio</span></h3>
+                                <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-2">Introduce los parámetros técnicos del movimiento</p>
                             </div>
+                            <button type="button" wire:click="closeModal()" class="p-3 glass rounded-full text-slate-500 hover:text-white transition-colors shadow-inner">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
 
-                            <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-6">
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
-                                    <input wire:model="name" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    @error('name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3">Nombre del Movimiento</label>
+                                    <input wire:model="name" type="text" class="w-full px-5 py-4 glass rounded-2xl text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold">
+                                    @error('name') <span class="text-rose-500 text-[10px] font-black uppercase mt-2 block">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Músculo Objetivo</label>
-                                    <input wire:model="target_muscle" type="text" placeholder="Ej: Pecho, Espalda..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    @error('target_muscle') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3">Músculo Objetivo</label>
+                                    <input wire:model="target_muscle" type="text" placeholder="Ej: Pectoral Mayor" class="w-full px-5 py-4 glass rounded-2xl text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold">
+                                    @error('target_muscle') <span class="text-rose-500 text-[10px] font-black uppercase mt-2 block">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Dificultad</label>
-                                    <select wire:model="difficulty_level" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                        <option value="principiante">Principiante</option>
-                                        <option value="intermedio">Intermedio</option>
-                                        <option value="avanzado">Avanzado</option>
+                                    <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3">Nivel de Dificultad</label>
+                                    <select wire:model="difficulty_level" class="w-full px-5 py-4 glass rounded-2xl text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold appearance-none bg-slate-900">
+                                        <option value="principiante" class="text-black">Principiante</option>
+                                        <option value="intermedio" class="text-black">Intermedio</option>
+                                        <option value="avanzado" class="text-black">Avanzado</option>
                                     </select>
-                                    @error('difficulty_level') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                    @error('difficulty_level') <span class="text-rose-500 text-[10px] font-black uppercase mt-2 block">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3">Descripción Técnica</label>
+                                    <textarea wire:model="description" rows="5" class="w-full px-5 py-4 glass rounded-2xl text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-medium text-sm"></textarea>
+                                    @error('description') <span class="text-rose-500 text-[10px] font-black uppercase mt-2 block">{{ $message }}</span> @enderror
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Descripción</label>
-                                    <textarea wire:model="description" rows="3" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                                    @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">URL de Video (Técnica)</label>
-                                    <input wire:model="video_url" type="text" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    @error('video_url') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Imagen o GIF Demostrativo</label>
-                                    <input wire:model="image" type="file" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                    @error('image') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                                    
-                                    @if ($image)
-                                        <div class="mt-2">
-                                            <p class="text-xs text-gray-500 mb-1">Previsualización:</p>
-                                            <img src="{{ $image->temporaryUrl() }}" class="h-20 rounded-lg shadow-sm">
-                                        </div>
-                                    @endif
+                                    <label class="block text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-3">Referencia Multimedia (Video/GIF)</label>
+                                    <input wire:model="video_url" type="text" placeholder="URL de YouTube o MP4" class="w-full px-5 py-4 glass rounded-2xl text-white outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all font-bold">
+                                    @error('video_url') <span class="text-rose-500 text-[10px] font-black uppercase mt-2 block">{{ $message }}</span> @enderror
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 flex flex-row-reverse space-x-2 space-x-reverse">
-                            <button type="submit" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all">
-                                Guardar Ejercicio
-                            </button>
-                            <button type="button" wire:click="closeModal()" class="px-6 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
-                                Cancelar
-                            </button>
+
+                        <div class="mt-10 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div class="flex items-center gap-4">
+                                <label class="cursor-pointer group">
+                                    <div class="px-6 py-4 glass rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white transition-all shadow-inner">Subir Imagen</div>
+                                    <input wire:model="image" type="file" class="hidden">
+                                </label>
+                                @if ($image)
+                                    <img src="{{ $image->temporaryUrl() }}" class="w-14 h-14 rounded-xl object-cover border-2 border-indigo-500 animate-bounce">
+                                @endif
+                                @error('image') <span class="text-rose-500 text-[10px] font-black uppercase">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div class="flex gap-4 w-full md:w-auto">
+                                <button type="button" wire:click="closeModal()" class="flex-1 md:flex-none px-10 py-4 glass rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">Cancelar</button>
+                                <button type="submit" class="flex-1 md:flex-none px-10 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all shadow-xl shadow-indigo-500/20">Guardar Datos</button>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     @endif

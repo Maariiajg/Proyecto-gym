@@ -32,22 +32,10 @@ class RoutineManager extends Component
 
     public function render()
     {
-        $query = Routine::with('creator', 'exercises')
-            ->where('name', 'like', '%' . $this->search . '%');
-
-        // If not admin, only see routines created by themselves OR created by admins
-        if (!auth()->user()->hasRole('admin')) {
-            $query->where(function($q) {
-                $q->where('creator_id', auth()->id())
-                  ->orWhereHas('creator', function($q2) {
-                      $q2->whereHas('roles', function($q3) {
-                          $q3->where('name', 'admin');
-                      });
-                  });
-            });
-        }
-
-        $this->routines = $query->latest()->get();
+        $this->routines = Routine::with('creator', 'exercises')
+            ->where('name', 'like', '%' . $this->search . '%')
+            ->latest()
+            ->get();
             
         return view('livewire.routine-manager');
     }
